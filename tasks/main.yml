@@ -10,23 +10,22 @@
     - prometheus_configure
     - prometheus_install
     - prometheus_run
-
-- include_tasks: preflight.yml
-  tags:
-    - prometheus_configure
-    - prometheus_install
-    - prometheus_run
-
-- include_tasks: install.yml
+- block:
+    - name: include preflight
+      include_tasks: preflight.yml
+      tags:
+        - prometheus_configure
+        - prometheus_install
+        - prometheus_run
+    - name: include install
+      include_tasks: install.yml
+      tags:
+        - prometheus_install
+    - name: include configure
+      include_tasks: configure.yml
+      tags:
+        - prometheus_configure
   become: true
-  tags:
-    - prometheus_install
-
-- include_tasks: configure.yml
-  become: true
-  tags:
-    - prometheus_configure
-
 - name: ensure prometheus service is started and enabled
   become: true
   systemd:
